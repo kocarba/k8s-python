@@ -37,7 +37,7 @@ class TestUtils(unittest.TestCase):
         body = client.V1Namespace(
             metadata=client.V1ObjectMeta(
                 name=cls.test_namespace))
-        
+
         # Delete the namespace if it already exists
         try:
             core_v1.delete_namespace(name=cls.test_namespace)
@@ -68,8 +68,10 @@ class TestUtils(unittest.TestCase):
                                                  namespace="default")
         self.assertIsNotNone(dep)
         self.assertEqual("nginx-app", dep.metadata.name)
-        self.assertEqual("nginx:1.15.4", dep.spec.template.spec.containers[0].image)
-        self.assertEqual(80, dep.spec.template.spec.containers[0].ports[0].container_port)
+        self.assertEqual(
+            "nginx:1.15.4", dep.spec.template.spec.containers[0].image)
+        self.assertEqual(
+            80, dep.spec.template.spec.containers[0].ports[0].container_port)
         self.assertEqual("nginx", dep.spec.template.spec.containers[0].name)
         self.assertEqual("nginx", dep.spec.template.metadata.labels["app"])
         self.assertEqual(3, dep.spec.replicas)
@@ -93,24 +95,30 @@ class TestUtils(unittest.TestCase):
                 k8s_client, self.path_prefix + "apps-deployment.yaml")
             app_api = client.AppsV1Api(k8s_client)
             dep = app_api.read_namespaced_deployment(name="nginx-app",
-                                                    namespace="default")
+                                                     namespace="default")
             self.assertIsNotNone(dep)
             self.assertEqual("nginx-app", dep.metadata.name)
-            self.assertEqual("nginx:1.15.4", dep.spec.template.spec.containers[0].image)
-            self.assertEqual(80, dep.spec.template.spec.containers[0].ports[0].container_port)
-            self.assertEqual("nginx", dep.spec.template.spec.containers[0].name)
+            self.assertEqual(
+                "nginx:1.15.4", dep.spec.template.spec.containers[0].image)
+            self.assertEqual(
+                80, dep.spec.template.spec.containers[0].ports[0].container_port)
+            self.assertEqual(
+                "nginx", dep.spec.template.spec.containers[0].name)
             self.assertEqual("nginx", dep.spec.template.metadata.labels["app"])
             self.assertEqual(3, dep.spec.replicas)
 
             utils.create_from_yaml(
                 k8s_client, self.path_prefix + "apps-deployment.yaml", apply=True)
             dep = app_api.read_namespaced_deployment(name="nginx-app",
-                                                    namespace="default")
+                                                     namespace="default")
             self.assertIsNotNone(dep)
             self.assertEqual("nginx-app", dep.metadata.name)
-            self.assertEqual("nginx:1.15.4", dep.spec.template.spec.containers[0].image)
-            self.assertEqual(80, dep.spec.template.spec.containers[0].ports[0].container_port)
-            self.assertEqual("nginx", dep.spec.template.spec.containers[0].name)
+            self.assertEqual(
+                "nginx:1.15.4", dep.spec.template.spec.containers[0].image)
+            self.assertEqual(
+                80, dep.spec.template.spec.containers[0].ports[0].container_port)
+            self.assertEqual(
+                "nginx", dep.spec.template.spec.containers[0].name)
             self.assertEqual("nginx", dep.spec.template.metadata.labels["app"])
             self.assertEqual(3, dep.spec.replicas)
         except Exception as e:
@@ -142,8 +150,10 @@ class TestUtils(unittest.TestCase):
                                                  namespace="default")
         self.assertIsNotNone(dep)
         self.assertEqual("nginx-app", dep.metadata.name)
-        self.assertEqual("nginx:1.15.4", dep.spec.template.spec.containers[0].image)
-        self.assertEqual(80, dep.spec.template.spec.containers[0].ports[0].container_port)
+        self.assertEqual(
+            "nginx:1.15.4", dep.spec.template.spec.containers[0].image)
+        self.assertEqual(
+            80, dep.spec.template.spec.containers[0].ports[0].container_port)
         self.assertEqual("nginx", dep.spec.template.spec.containers[0].name)
         self.assertEqual("nginx", dep.spec.template.metadata.labels["app"])
         self.assertEqual(3, dep.spec.replicas)
@@ -171,8 +181,10 @@ class TestUtils(unittest.TestCase):
                                                  namespace="default")
         self.assertIsNotNone(dep)
         self.assertEqual("nginx-app-3", dep.metadata.name)
-        self.assertEqual("nginx:1.15.4", dep.spec.template.spec.containers[0].image)
-        self.assertEqual(80, dep.spec.template.spec.containers[0].ports[0].container_port)
+        self.assertEqual(
+            "nginx:1.15.4", dep.spec.template.spec.containers[0].image)
+        self.assertEqual(
+            80, dep.spec.template.spec.containers[0].ports[0].container_port)
         self.assertEqual("nginx", dep.spec.template.spec.containers[0].name)
         self.assertEqual("nginx", dep.spec.template.metadata.labels["app"])
         self.assertEqual(3, dep.spec.replicas)
@@ -347,7 +359,8 @@ class TestUtils(unittest.TestCase):
                                                  namespace="default")
         self.assertIsNotNone(dep)
         self.assertEqual("list-deployment-test", dep.metadata.name)
-        self.assertEqual("nginx:1.15.4", dep.spec.template.spec.containers[0].image)
+        self.assertEqual(
+            "nginx:1.15.4", dep.spec.template.spec.containers[0].image)
         self.assertEqual(1, dep.spec.replicas)
 
         core_api.delete_namespaced_service(name="list-service-test",
@@ -429,8 +442,10 @@ class TestUtils(unittest.TestCase):
         self.assertEqual("mock", ctr.spec.template.metadata.labels["app"])
         self.assertEqual("mock", ctr.spec.selector["app"])
         self.assertEqual(1, ctr.spec.replicas)
-        self.assertEqual("k8s.gcr.io/pause:2.0", ctr.spec.template.spec.containers[0].image)
-        self.assertEqual("mock-container", ctr.spec.template.spec.containers[0].name)
+        self.assertEqual("k8s.gcr.io/pause:2.0",
+                         ctr.spec.template.spec.containers[0].image)
+        self.assertEqual("mock-container",
+                         ctr.spec.template.spec.containers[0].name)
 
         core_api.delete_namespaced_replication_controller(
             name="mock", namespace="default", propagation_policy="Background")
@@ -462,8 +477,10 @@ class TestUtils(unittest.TestCase):
         self.assertEqual("mock", ctr.spec.template.metadata.labels["app"])
         self.assertEqual("mock", ctr.spec.selector["app"])
         self.assertEqual(1, ctr.spec.replicas)
-        self.assertEqual("k8s.gcr.io/pause:2.0", ctr.spec.template.spec.containers[0].image)
-        self.assertEqual("mock-container", ctr.spec.template.spec.containers[0].name)
+        self.assertEqual("k8s.gcr.io/pause:2.0",
+                         ctr.spec.template.spec.containers[0].image)
+        self.assertEqual("mock-container",
+                         ctr.spec.template.spec.containers[0].name)
 
         core_api.delete_namespaced_replication_controller(
             name="mock", namespace="default", propagation_policy="Background")
@@ -618,7 +635,6 @@ class TestUtils(unittest.TestCase):
         app_api.delete_namespaced_deployment(
             name="mock", namespace=self.test_namespace, body={})
 
-
     def test_delete_namespace_from_yaml(self):
         """
         Should be able to delete a namespace
@@ -633,12 +649,13 @@ class TestUtils(unittest.TestCase):
         """
         Delete namespace from yaml
         """
-        utils.delete_from_yaml(k8s_client, self.path_prefix + "core-namespace.yaml")
+        utils.delete_from_yaml(
+            k8s_client, self.path_prefix + "core-namespace.yaml")
         time.sleep(10)
-        namespace_status=False
+        namespace_status = False
         try:
-            nmsp=core_api.read_namespace(name="development")
-            namespace_status=True
+            nmsp = core_api.read_namespace(name="development")
+            namespace_status = True
         except Exception as e:
             self.assertFalse(namespace_status)
         self.assertFalse(namespace_status)
@@ -656,15 +673,17 @@ class TestUtils(unittest.TestCase):
                                                  namespace="default")
         self.assertIsNotNone(dep)
         """
-        Deployment should be created 
+        Deployment should be created
         Now delete deployment using delete_from_yaml method
         """
-        utils.delete_from_yaml(k8s_client, self.path_prefix + "apps-deployment.yaml")
-        deployment_status=False
+        utils.delete_from_yaml(
+            k8s_client, self.path_prefix + "apps-deployment.yaml")
+        deployment_status = False
         time.sleep(10)
         try:
-            response=app_api.read_namespaced_deployment(name="nginx-app",namespace="default")
-            deployment_status=True
+            response = app_api.read_namespaced_deployment(
+                name="nginx-app", namespace="default")
+            deployment_status = True
         except Exception as e:
             self.assertFalse(deployment_status)
 
@@ -687,11 +706,12 @@ class TestUtils(unittest.TestCase):
         """
         utils.delete_from_yaml(
             k8s_client, self.path_prefix + "core-service.yaml")
-        service_status=False
+        service_status = False
         time.sleep(10)
         try:
-            response = core_api.read_namespaced_service(name="my-service",namespace="default")
-            service_status=True
+            response = core_api.read_namespaced_service(
+                name="my-service", namespace="default")
+            service_status = True
         except Exception as e:
             self.assertFalse(service_status)
         self.assertFalse(service_status)
@@ -714,15 +734,14 @@ class TestUtils(unittest.TestCase):
         utils.delete_from_yaml(
             k8s_client, self.path_prefix + "core-pod.yaml")
         time.sleep(10)
-        pod_status=False
+        pod_status = False
         try:
             response = core_api.read_namespaced_pod(name="myapp-pod",
                                                     namespace="default")
-            pod_status=True
+            pod_status = True
         except Exception as e:
             self.assertFalse(pod_status)
         self.assertFalse(pod_status)
-
 
     def test_delete_rbac_role_from_yaml(self):
         """
@@ -741,12 +760,12 @@ class TestUtils(unittest.TestCase):
         """
         utils.delete_from_yaml(
             k8s_client, self.path_prefix + "rbac-role.yaml")
-        rbac_role_status=False
+        rbac_role_status = False
         time.sleep(10)
         try:
             response = rbac_api.read_namespaced_role(
                 name="pod-reader", namespace="default")
-            rbac_role_status=True
+            rbac_role_status = True
         except Exception as e:
             self.assertFalse(rbac_role_status)
         self.assertFalse(rbac_role_status)
@@ -769,16 +788,15 @@ class TestUtils(unittest.TestCase):
         utils.delete_from_yaml(
             k8s_client, self.path_prefix + "rbac-role.yaml", verbose=True)
 
-        rbac_role_status=False
+        rbac_role_status = False
         time.sleep(10)
         try:
-            response=rbac_api.read_namespaced_role(
+            response = rbac_api.read_namespaced_role(
                 name="pod-reader", namespace="default")
-            rbac_role_status=True
+            rbac_role_status = True
         except Exception as e:
             self.assertFalse(rbac_role_status)
         self.assertFalse(rbac_role_status)
-
 
     # Deletion Tests for multi resource objects in yaml files
 
@@ -803,14 +821,14 @@ class TestUtils(unittest.TestCase):
         """
         utils.delete_from_yaml(
             k8s_client, self.path_prefix + "multi-resource.yaml")
-        svc_status=False
-        replication_status=False
+        svc_status = False
+        replication_status = False
         time.sleep(10)
         try:
-            resp_svc= core_api.read_namespaced_service(name="mock",
-                                                       namespace="default")
-            svc_status=True
-            resp_repl= core_api.read_namespaced_replication_controller(
+            resp_svc = core_api.read_namespaced_service(name="mock",
+                                                        namespace="default")
+            svc_status = True
+            resp_repl = core_api.read_namespaced_replication_controller(
                 name="mock", namespace="default")
             repl_status = True
         except Exception as e:
@@ -844,9 +862,9 @@ class TestUtils(unittest.TestCase):
         utils.delete_from_yaml(
             k8s_client, self.path_prefix + "multi-resource-with-list.yaml")
         time.sleep(10)
-        pod0_status=False
-        pod1_status=False
-        deploy_status=False
+        pod0_status = False
+        pod1_status = False
+        deploy_status = False
         try:
             core_api.read_namespaced_pod(
                 name="mock-pod-0", namespace="default")
@@ -854,9 +872,9 @@ class TestUtils(unittest.TestCase):
                 name="mock-pod-1", namespace="default")
             app_api.read_namespaced_deployment(
                 name="mock", namespace="default")
-            pod0_status=True
-            pod1_status=True
-            deploy_status=True
+            pod0_status = True
+            pod1_status = True
+            deploy_status = True
         except Exception as e:
             self.assertFalse(pod0_status)
             self.assertFalse(pod1_status)
@@ -881,7 +899,8 @@ class TestUtilsUnitTests(unittest.TestCase):
         self.assertRaises(
             ValueError, lambda: quantity.parse_quantity("1000ki")
         )
-        self.assertRaises(ValueError, lambda: quantity.parse_quantity("1000foo"))
+        self.assertRaises(
+            ValueError, lambda: quantity.parse_quantity("1000foo"))
         self.assertRaises(ValueError, lambda: quantity.parse_quantity("foo"))
 
         # == no suffix ==
@@ -898,14 +917,18 @@ class TestUtilsUnitTests(unittest.TestCase):
         self.assertEqual(quantity.parse_quantity("0.5Ki"), Decimal(512))
 
         # == base 1000 ==
-        self.assertAlmostEqual(quantity.parse_quantity("1n"), Decimal(0.000_000_001))
-        self.assertAlmostEqual(quantity.parse_quantity("1u"), Decimal(0.000_001))
+        self.assertAlmostEqual(quantity.parse_quantity(
+            "1n"), Decimal(0.000_000_001))
+        self.assertAlmostEqual(
+            quantity.parse_quantity("1u"), Decimal(0.000_001))
         self.assertAlmostEqual(quantity.parse_quantity("1m"), Decimal(0.001))
         self.assertEqual(quantity.parse_quantity("1k"), Decimal(1_000))
         self.assertEqual(quantity.parse_quantity("1M"), Decimal(1_000_000))
         self.assertEqual(quantity.parse_quantity("1G"), Decimal(1_000_000_000))
-        self.assertEqual(quantity.parse_quantity("1T"), Decimal(1_000_000_000_000))
-        self.assertEqual(quantity.parse_quantity("1P"), Decimal(1_000_000_000_000_000))
+        self.assertEqual(quantity.parse_quantity(
+            "1T"), Decimal(1_000_000_000_000))
+        self.assertEqual(quantity.parse_quantity(
+            "1P"), Decimal(1_000_000_000_000_000))
         self.assertEqual(
             quantity.parse_quantity("1E"), Decimal(1_000_000_000_000_000_000))
         self.assertEqual(quantity.parse_quantity("1000k"), Decimal(1_000_000))
@@ -928,17 +951,25 @@ class TestUtilsUnitTests(unittest.TestCase):
 
         # == no suffix ==
         self.assertEqual(quantity.format_quantity(Decimal(1_000), ""), "1000")
-        self.assertEqual(quantity.format_quantity(Decimal(1_000), None), "1000")
+        self.assertEqual(quantity.format_quantity(
+            Decimal(1_000), None), "1000")
 
         # == base 1024 ==
         self.assertEqual(quantity.format_quantity(Decimal(1024), "Ki"), "1Ki")
-        self.assertEqual(quantity.format_quantity(Decimal(1024**2), "Mi"), "1Mi")
-        self.assertEqual(quantity.format_quantity(Decimal(1024**3), "Gi"), "1Gi")
-        self.assertEqual(quantity.format_quantity(Decimal(1024**4), "Ti"), "1Ti")
-        self.assertEqual(quantity.format_quantity(Decimal(1024**5), "Pi"), "1Pi")
-        self.assertEqual(quantity.format_quantity(Decimal(1024**6), "Ei"), "1Ei")
-        self.assertEqual(quantity.format_quantity(Decimal(1024**2), "Ki"), "1024Ki")
-        self.assertEqual(quantity.format_quantity(Decimal((1024**3) / 2), "Gi"), "0.5Gi")
+        self.assertEqual(quantity.format_quantity(
+            Decimal(1024**2), "Mi"), "1Mi")
+        self.assertEqual(quantity.format_quantity(
+            Decimal(1024**3), "Gi"), "1Gi")
+        self.assertEqual(quantity.format_quantity(
+            Decimal(1024**4), "Ti"), "1Ti")
+        self.assertEqual(quantity.format_quantity(
+            Decimal(1024**5), "Pi"), "1Pi")
+        self.assertEqual(quantity.format_quantity(
+            Decimal(1024**6), "Ei"), "1Ei")
+        self.assertEqual(quantity.format_quantity(
+            Decimal(1024**2), "Ki"), "1024Ki")
+        self.assertEqual(quantity.format_quantity(
+            Decimal((1024**3) / 2), "Gi"), "0.5Gi")
         # Decimal((1024**3)/3) are 0.3333333333333333148296162562Gi; expecting to
         # be quantized to 0.3Gi
         self.assertEqual(
@@ -950,12 +981,16 @@ class TestUtilsUnitTests(unittest.TestCase):
             "0.3Gi")
 
         # == base 1000 ==
-        self.assertEqual(quantity.format_quantity(Decimal(0.000_000_001), "n"), "1n")
-        self.assertEqual(quantity.format_quantity(Decimal(0.000_001), "u"), "1u")
+        self.assertEqual(quantity.format_quantity(
+            Decimal(0.000_000_001), "n"), "1n")
+        self.assertEqual(quantity.format_quantity(
+            Decimal(0.000_001), "u"), "1u")
         self.assertEqual(quantity.format_quantity(Decimal(0.001), "m"), "1m")
         self.assertEqual(quantity.format_quantity(Decimal(1_000), "k"), "1k")
-        self.assertEqual(quantity.format_quantity(Decimal(1_000_000), "M"), "1M")
-        self.assertEqual(quantity.format_quantity(Decimal(1_000_000_000), "G"), "1G")
+        self.assertEqual(quantity.format_quantity(
+            Decimal(1_000_000), "M"), "1M")
+        self.assertEqual(quantity.format_quantity(
+            Decimal(1_000_000_000), "G"), "1G")
         self.assertEqual(
             quantity.format_quantity(Decimal(1_000_000_000_000), "T"), "1T"
         )
@@ -963,9 +998,11 @@ class TestUtilsUnitTests(unittest.TestCase):
             quantity.format_quantity(Decimal(1_000_000_000_000_000), "P"), "1P"
         )
         self.assertEqual(
-            quantity.format_quantity(Decimal(1_000_000_000_000_000_000), "E"), "1E"
+            quantity.format_quantity(
+                Decimal(1_000_000_000_000_000_000), "E"), "1E"
         )
-        self.assertEqual(quantity.format_quantity(Decimal(1_000_000), "k"), "1000k")
+        self.assertEqual(quantity.format_quantity(
+            Decimal(1_000_000), "k"), "1000k")
         # Decimal(1_000_000/3) are 333.3333333333333139307796955k; expecting to
         # be quantized to 333k
         self.assertEqual(
