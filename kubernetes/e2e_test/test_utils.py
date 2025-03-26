@@ -61,7 +61,7 @@ class TestUtils(unittest.TestCase):
         Should be able to create an apps/v1 deployment.
         """
         k8s_client = client.api_client.ApiClient(configuration=self.config)
-        utils.create_from_yaml(
+        utils.process_from_yaml(
             k8s_client, self.path_prefix + "apps-deployment.yaml")
         app_api = client.AppsV1Api(k8s_client)
         dep = app_api.read_namespaced_deployment(name="nginx-app",
@@ -91,7 +91,7 @@ class TestUtils(unittest.TestCase):
         """
         k8s_client = client.api_client.ApiClient(configuration=self.config)
         try:
-            utils.create_from_yaml(
+            utils.process_from_yaml(
                 k8s_client, self.path_prefix + "apps-deployment.yaml")
             app_api = client.AppsV1Api(k8s_client)
             dep = app_api.read_namespaced_deployment(name="nginx-app",
@@ -107,7 +107,7 @@ class TestUtils(unittest.TestCase):
             self.assertEqual("nginx", dep.spec.template.metadata.labels["app"])
             self.assertEqual(3, dep.spec.replicas)
 
-            utils.create_from_yaml(
+            utils.process_from_yaml(
                 k8s_client, self.path_prefix + "apps-deployment.yaml", apply=True)
             dep = app_api.read_namespaced_deployment(name="nginx-app",
                                                      namespace="default")
@@ -141,7 +141,7 @@ class TestUtils(unittest.TestCase):
         _path = self.path_prefix + "apps-deployment.yaml"
         with open(path.abspath(_path)) as f:
             yaml_objects = yaml.safe_load_all(f)
-            utils.create_from_yaml(
+            utils.process_from_yaml(
                 k8s_client,
                 yaml_objects=yaml_objects,
             )
@@ -174,7 +174,7 @@ class TestUtils(unittest.TestCase):
 
         yml_obj["metadata"]["name"] = "nginx-app-3"
 
-        utils.create_from_dict(k8s_client, yml_obj)
+        utils.process_from_dict(k8s_client, yml_obj)
 
         app_api = client.AppsV1Api(k8s_client)
         dep = app_api.read_namespaced_deployment(name="nginx-app-3",
@@ -198,7 +198,7 @@ class TestUtils(unittest.TestCase):
         Should be able to create a pod.
         """
         k8s_client = client.api_client.ApiClient(configuration=self.config)
-        utils.create_from_yaml(
+        utils.process_from_yaml(
             k8s_client, self.path_prefix + "core-pod.yaml")
         core_api = client.CoreV1Api(k8s_client)
         pod = core_api.read_namespaced_pod(name="myapp-pod",
@@ -217,7 +217,7 @@ class TestUtils(unittest.TestCase):
         Should be able to create a service.
         """
         k8s_client = client.api_client.ApiClient(configuration=self.config)
-        utils.create_from_yaml(
+        utils.process_from_yaml(
             k8s_client, self.path_prefix + "core-service.yaml")
         core_api = client.CoreV1Api(k8s_client)
         svc = core_api.read_namespaced_service(name="my-service",
@@ -235,7 +235,7 @@ class TestUtils(unittest.TestCase):
         Should be able to create a namespace.
         """
         k8s_client = client.api_client.ApiClient(configuration=self.config)
-        utils.create_from_yaml(
+        utils.process_from_yaml(
             k8s_client, self.path_prefix + "core-namespace.yaml")
         core_api = client.CoreV1Api(k8s_client)
         nmsp = core_api.read_namespace(name="development")
@@ -250,7 +250,7 @@ class TestUtils(unittest.TestCase):
         Should be able to create a rbac role.
         """
         k8s_client = client.api_client.ApiClient(configuration=self.config)
-        utils.create_from_yaml(
+        utils.process_from_yaml(
             k8s_client, self.path_prefix + "rbac-role.yaml")
         rbac_api = client.RbacAuthorizationV1Api(k8s_client)
         rbac_role = rbac_api.read_namespaced_role(
@@ -267,7 +267,7 @@ class TestUtils(unittest.TestCase):
         Should be able to create a rbac role with verbose enabled.
         """
         k8s_client = client.api_client.ApiClient(configuration=self.config)
-        utils.create_from_yaml(
+        utils.process_from_yaml(
             k8s_client, self.path_prefix + "rbac-role.yaml", verbose=True)
         rbac_api = client.RbacAuthorizationV1Api(k8s_client)
         rbac_role = rbac_api.read_namespaced_role(
@@ -285,9 +285,9 @@ class TestUtils(unittest.TestCase):
         and then create a deployment in the just-created namespace.
         """
         k8s_client = client.ApiClient(configuration=self.config)
-        utils.create_from_yaml(
+        utils.process_from_yaml(
             k8s_client, self.path_prefix + "dep-namespace.yaml")
-        utils.create_from_yaml(
+        utils.process_from_yaml(
             k8s_client, self.path_prefix + "dep-deployment.yaml")
         core_api = client.CoreV1Api(k8s_client)
         ext_api = client.AppsV1Api(k8s_client)
@@ -310,7 +310,7 @@ class TestUtils(unittest.TestCase):
         fail due to conflict.
         """
         k8s_client = client.api_client.ApiClient(configuration=self.config)
-        utils.create_from_yaml(
+        utils.process_from_yaml(
             k8s_client, self.path_prefix + "api-service.yaml")
         reg_api = client.ApiregistrationV1Api(k8s_client)
         svc = reg_api.read_api_service(
@@ -320,8 +320,8 @@ class TestUtils(unittest.TestCase):
         self.assertEqual("wardle.k8s.io", svc.spec.group)
         self.assertEqual("v1alpha1", svc.spec.version)
 
-        with self.assertRaises(utils.FailToCreateError) as cm:
-            utils.create_from_yaml(
+        with self.assertRaises(utils.FailToProcessError) as cm:
+            utils.process_from_yaml(
                 k8s_client, "kubernetes/e2e_test/test_yaml/api-service.yaml")
         exp_error = ('Error from server (Conflict): '
                      '{"kind":"Status","apiVersion":"v1","metadata":{},'
@@ -345,7 +345,7 @@ class TestUtils(unittest.TestCase):
         from a kind: List yaml file
         """
         k8s_client = client.api_client.ApiClient(configuration=self.config)
-        utils.create_from_yaml(
+        utils.process_from_yaml(
             k8s_client, self.path_prefix + "list.yaml")
         core_api = client.CoreV1Api(k8s_client)
         ext_api = client.AppsV1Api(k8s_client)
@@ -374,7 +374,7 @@ class TestUtils(unittest.TestCase):
         from a kind: NamespaceList yaml file
         """
         k8s_client = client.api_client.ApiClient(configuration=self.config)
-        utils.create_from_yaml(
+        utils.process_from_yaml(
             k8s_client, self.path_prefix + "namespace-list.yaml")
         core_api = client.CoreV1Api(k8s_client)
         nmsp_1 = core_api.read_namespace(name="mock-1")
@@ -396,8 +396,8 @@ class TestUtils(unittest.TestCase):
         json file that implicitly indicates the kind of individual objects
         """
         k8s_client = client.api_client.ApiClient(configuration=self.config)
-        with self.assertRaises(utils.FailToCreateError):
-            utils.create_from_yaml(
+        with self.assertRaises(utils.FailToProcessError):
+            utils.process_from_yaml(
                 k8s_client, self.path_prefix + "implicit-svclist.json")
         core_api = client.CoreV1Api(k8s_client)
         svc_3 = core_api.read_namespaced_service(name="mock-3",
@@ -425,7 +425,7 @@ class TestUtils(unittest.TestCase):
         from a directory
         """
         k8s_client = client.api_client.ApiClient(configuration=self.config)
-        utils.create_from_directory(
+        utils.process_from_directory(
             k8s_client, self.path_prefix + "multi-resource/")
         core_api = client.CoreV1Api(k8s_client)
         svc = core_api.read_namespaced_service(name="mock",
@@ -460,7 +460,7 @@ class TestUtils(unittest.TestCase):
         from a multi-resource yaml file
         """
         k8s_client = client.api_client.ApiClient(configuration=self.config)
-        utils.create_from_yaml(
+        utils.process_from_yaml(
             k8s_client, self.path_prefix + "multi-resource.yaml")
         core_api = client.CoreV1Api(k8s_client)
         svc = core_api.read_namespaced_service(name="mock",
@@ -493,7 +493,7 @@ class TestUtils(unittest.TestCase):
         specified in the multi-resource file
         """
         k8s_client = client.api_client.ApiClient(configuration=self.config)
-        utils.create_from_yaml(
+        utils.process_from_yaml(
             k8s_client, self.path_prefix + "multi-resource-with-list.yaml")
         core_api = client.CoreV1Api(k8s_client)
         app_api = client.AppsV1Api(k8s_client)
@@ -535,7 +535,7 @@ class TestUtils(unittest.TestCase):
         Should raise an exception for failure to create the same service twice.
         """
         k8s_client = client.api_client.ApiClient(configuration=self.config)
-        utils.create_from_yaml(
+        utils.process_from_yaml(
             k8s_client, self.path_prefix + "yaml-conflict-first.yaml")
         core_api = client.CoreV1Api(k8s_client)
         svc = core_api.read_namespaced_service(name="mock-2",
@@ -546,8 +546,8 @@ class TestUtils(unittest.TestCase):
         self.assertEqual("mock-2", svc.spec.selector["app"])
         self.assertEqual(99, svc.spec.ports[0].port)
 
-        with self.assertRaises(utils.FailToCreateError) as cm:
-            utils.create_from_yaml(
+        with self.assertRaises(utils.FailToProcessError) as cm:
+            utils.process_from_yaml(
                 k8s_client, self.path_prefix + "yaml-conflict-multi.yaml")
         exp_error = ('Error from server (Conflict): {"kind":"Status",'
                      '"apiVersion":"v1","metadata":{},"status":"Failure",'
@@ -571,8 +571,8 @@ class TestUtils(unittest.TestCase):
         Should raise an exception that contains two error messages.
         """
         k8s_client = client.api_client.ApiClient(configuration=self.config)
-        with self.assertRaises(utils.FailToCreateError) as cm:
-            utils.create_from_yaml(
+        with self.assertRaises(utils.FailToProcessError) as cm:
+            utils.process_from_yaml(
                 k8s_client, self.path_prefix + "triple-nginx.yaml")
         exp_error = ('Error from server (Conflict): {"kind":"Status",'
                      '"apiVersion":"v1","metadata":{},"status":"Failure",'
@@ -597,7 +597,7 @@ class TestUtils(unittest.TestCase):
                 in a test namespace.
         """
         k8s_client = client.api_client.ApiClient(configuration=self.config)
-        utils.create_from_yaml(
+        utils.process_from_yaml(
             k8s_client, self.path_prefix + "apps-deployment.yaml",
             namespace=self.test_namespace)
         app_api = client.AppsV1Api(k8s_client)
@@ -614,7 +614,7 @@ class TestUtils(unittest.TestCase):
         specified in the multi-resource file in a test namespace
         """
         k8s_client = client.api_client.ApiClient(configuration=self.config)
-        utils.create_from_yaml(
+        utils.process_from_yaml(
             k8s_client, self.path_prefix + "multi-resource-with-list.yaml",
             namespace=self.test_namespace)
         core_api = client.CoreV1Api(k8s_client)
@@ -641,7 +641,7 @@ class TestUtils(unittest.TestCase):
         Create namespace from file first and ensure it is created
         """
         k8s_client = client.api_client.ApiClient(configuration=self.config)
-        utils.create_from_yaml(
+        utils.process_from_yaml(
             k8s_client, self.path_prefix + "core-namespace.yaml")
         core_api = client.CoreV1Api(k8s_client)
         nmsp = core_api.read_namespace(name="development")
@@ -649,8 +649,8 @@ class TestUtils(unittest.TestCase):
         """
         Delete namespace from yaml
         """
-        utils.delete_from_yaml(
-            k8s_client, self.path_prefix + "core-namespace.yaml")
+        utils.process_from_yaml(
+            k8s_client, self.path_prefix + "core-namespace.yaml", action="delete")
         time.sleep(10)
         namespace_status = False
         try:
@@ -666,7 +666,7 @@ class TestUtils(unittest.TestCase):
         First create deployment from file and ensure it is created
         """
         k8s_client = client.api_client.ApiClient(configuration=self.config)
-        utils.create_from_yaml(
+        utils.process_from_yaml(
             k8s_client, self.path_prefix + "apps-deployment.yaml")
         app_api = client.AppsV1Api(k8s_client)
         dep = app_api.read_namespaced_deployment(name="nginx-app",
@@ -676,8 +676,8 @@ class TestUtils(unittest.TestCase):
         Deployment should be created
         Now delete deployment using delete_from_yaml method
         """
-        utils.delete_from_yaml(
-            k8s_client, self.path_prefix + "apps-deployment.yaml")
+        utils.process_from_yaml(
+            k8s_client, self.path_prefix + "apps-deployment.yaml", action="delete")
         deployment_status = False
         time.sleep(10)
         try:
@@ -695,7 +695,7 @@ class TestUtils(unittest.TestCase):
         Create service from yaml first and ensure it is created
         """
         k8s_client = client.api_client.ApiClient(configuration=self.config)
-        utils.create_from_yaml(
+        utils.process_from_yaml(
             k8s_client, self.path_prefix + "core-service.yaml")
         core_api = client.CoreV1Api(k8s_client)
         svc = core_api.read_namespaced_service(name="my-service",
@@ -704,8 +704,8 @@ class TestUtils(unittest.TestCase):
         """
         Delete service from yaml
         """
-        utils.delete_from_yaml(
-            k8s_client, self.path_prefix + "core-service.yaml")
+        utils.process_from_yaml(
+            k8s_client, self.path_prefix + "core-service.yaml", action="delete")
         service_status = False
         time.sleep(10)
         try:
@@ -722,7 +722,7 @@ class TestUtils(unittest.TestCase):
         Create pod from file first and ensure it is created
         """
         k8s_client = client.api_client.ApiClient(configuration=self.config)
-        utils.create_from_yaml(
+        utils.process_from_yaml(
             k8s_client, self.path_prefix + "core-pod.yaml")
         core_api = client.CoreV1Api(k8s_client)
         pod = core_api.read_namespaced_pod(name="myapp-pod",
@@ -731,8 +731,8 @@ class TestUtils(unittest.TestCase):
         """
         Delete pod using delete_from_yaml
         """
-        utils.delete_from_yaml(
-            k8s_client, self.path_prefix + "core-pod.yaml")
+        utils.process_from_yaml(
+            k8s_client, self.path_prefix + "core-pod.yaml", action="delete")
         time.sleep(10)
         pod_status = False
         try:
@@ -749,7 +749,7 @@ class TestUtils(unittest.TestCase):
         Create rbac role from file first and ensure it is created
         """
         k8s_client = client.api_client.ApiClient(configuration=self.config)
-        utils.create_from_yaml(
+        utils.process_from_yaml(
             k8s_client, self.path_prefix + "rbac-role.yaml")
         rbac_api = client.RbacAuthorizationV1Api(k8s_client)
         rbac_role = rbac_api.read_namespaced_role(
@@ -758,8 +758,8 @@ class TestUtils(unittest.TestCase):
         """
         Delete rbac role from yaml
         """
-        utils.delete_from_yaml(
-            k8s_client, self.path_prefix + "rbac-role.yaml")
+        utils.process_from_yaml(
+            k8s_client, self.path_prefix + "rbac-role.yaml", action="delete")
         rbac_role_status = False
         time.sleep(10)
         try:
@@ -776,7 +776,7 @@ class TestUtils(unittest.TestCase):
         Create rbac role with verbose enabled and ensure it is created
         """
         k8s_client = client.api_client.ApiClient(configuration=self.config)
-        utils.create_from_yaml(
+        utils.process_from_yaml(
             k8s_client, self.path_prefix + "rbac-role.yaml", verbose=True)
         rbac_api = client.RbacAuthorizationV1Api(k8s_client)
         rbac_role = rbac_api.read_namespaced_role(
@@ -785,8 +785,8 @@ class TestUtils(unittest.TestCase):
         """
         Delete the rbac role from yaml
         """
-        utils.delete_from_yaml(
-            k8s_client, self.path_prefix + "rbac-role.yaml", verbose=True)
+        utils.process_from_yaml(
+            k8s_client, self.path_prefix + "rbac-role.yaml", verbose=True, action="delete")
 
         rbac_role_status = False
         time.sleep(10)
@@ -807,7 +807,7 @@ class TestUtils(unittest.TestCase):
         Create the resources first and ensure they exist
         """
         k8s_client = client.api_client.ApiClient(configuration=self.config)
-        utils.create_from_yaml(
+        utils.process_from_yaml(
             k8s_client, self.path_prefix + "multi-resource.yaml")
         core_api = client.CoreV1Api(k8s_client)
         svc = core_api.read_namespaced_service(name="mock",
@@ -819,8 +819,8 @@ class TestUtils(unittest.TestCase):
         """
         Delete service and replication controller using yaml file
         """
-        utils.delete_from_yaml(
-            k8s_client, self.path_prefix + "multi-resource.yaml")
+        utils.process_from_yaml(
+            k8s_client, self.path_prefix + "multi-resource.yaml", action="delete")
         svc_status = False
         replication_status = False
         time.sleep(10)
@@ -843,7 +843,7 @@ class TestUtils(unittest.TestCase):
         Create the items first and ensure they exist
         """
         k8s_client = client.api_client.ApiClient(configuration=self.config)
-        utils.create_from_yaml(
+        utils.process_from_yaml(
             k8s_client, self.path_prefix + "multi-resource-with-list.yaml")
         core_api = client.CoreV1Api(k8s_client)
         app_api = client.AppsV1Api(k8s_client)
@@ -859,8 +859,8 @@ class TestUtils(unittest.TestCase):
         """
         Delete the PodList and Deployment using the yaml file
         """
-        utils.delete_from_yaml(
-            k8s_client, self.path_prefix + "multi-resource-with-list.yaml")
+        utils.process_from_yaml(
+            k8s_client, self.path_prefix + "multi-resource-with-list.yaml", action="delete")
         time.sleep(10)
         pod0_status = False
         pod1_status = False

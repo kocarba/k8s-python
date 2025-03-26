@@ -14,9 +14,7 @@
 
 from __future__ import absolute_import
 
-from .create_from_yaml import (FailToCreateError, create_from_dict,
-                               create_from_yaml, create_from_directory)
-from .delete_from_yaml import (FailToDeleteError, delete_from_dict,
-                               delete_from_yaml, delete_from_directory)
+from .yaml_processor import (FailToProcessError, process_from_dict,
+                             process_from_yaml, process_from_directory)
 from .quantity import parse_quantity
-from. duration import parse_duration
+from . duration import parse_duration
