@@ -324,7 +324,8 @@ def process_from_yaml_single_item(
         if "namespace" in yml_object["metadata"]:
             namespace = yml_object["metadata"]["namespace"]
             api_args["namespace"] = namespace
-        resp = getattr(k8s_api, "{0}_namespaced_{1}".format(action, kind))(**api_args)
+        resp = getattr(k8s_api, "{0}_namespaced_{1}".format(
+            action, kind))(**api_args)
     else:
         api_args.pop("namespace", None)
         resp = getattr(k8s_api, "{0}_{1}".format(action, kind))(**api_args)
@@ -353,3 +354,137 @@ class FailToProcessError(Exception):
                 api_exception.reason, api_exception.body
             )
         return msg
+
+
+def create_from_directory(
+    k8s_client, yaml_dir=None, verbose=False, namespace="default", apply=False, **kwargs
+):
+    """
+    Perform an action from files from a directory. Pass True for verbose to
+    print confirmation information.
+
+    Input:
+    k8s_client: an ApiClient object, initialized with the client args.
+    yaml_dir: string. Contains the path to directory.
+    verbose: If True, print confirmation from the create action.
+        Default is False.
+    namespace: string. Contains the namespace to create all
+        resources inside. The namespace must preexist otherwise
+        the resource creation will fail. If the API object in
+        the yaml file already contains a namespace definition
+        this parameter has no effect.
+    apply: bool. If True, use server-side apply for creating resources.
+
+    Available parameters for creating <kind>:
+    :param async_req bool
+    :param bool include_uninitialized: If true, partially initialized
+        resources are included in the response.
+    :param str pretty: If 'true', then the output is pretty printed.
+    :param str dry_run: When present, indicates that modifications
+        should not be persisted. An invalid or unrecognized dryRun
+        directive will result in an error response and no further
+        processing of the request.
+        Valid values are: - All: all dry run stages will be processed
+
+    Returns:
+        The list containing the created kubernetes API objects.
+
+    Raises:
+        FailToCreateError which holds list of `client.rest.ApiException`
+        instances for each object that failed to create.
+    """
+    return process_from_directory(
+        k8s_client,
+        yaml_dir,
+        verbose=verbose,
+        namespace=namespace,
+        apply=apply,
+        action="create",
+        **kwargs,
+    )
+
+
+def create_from_yaml(
+        k8s_client,
+        yaml_file=None,
+        yaml_objects=None,
+        verbose=False,
+        namespace="default",
+        apply=False,
+        **kwargs):
+    """
+    Perform an action from a yaml file. Pass True for verbose to
+    print confirmation information.
+    Input:
+    yaml_file: string. Contains the path to yaml file.
+    k8s_client: an ApiClient object, initialized with the client args.
+    yaml_objects: List[dict]. Optional list of YAML objects; used instead
+        of reading the `yaml_file`. Default is None.
+    verbose: If True, print confirmation from the create action.
+        Default is False.
+    namespace: string. Contains the namespace to create all
+        resources inside. The namespace must preexist otherwise
+        the resource creation will fail. If the API object in
+        the yaml file already contains a namespace definition
+        this parameter has no effect.
+
+    Available parameters for creating <kind>:
+    :param async_req bool
+    :param bool include_uninitialized: If true, partially initialized
+        resources are included in the response.
+    :param str pretty: If 'true', then the output is pretty printed.
+    :param str dry_run: When present, indicates that modifications
+        should not be persisted. An invalid or unrecognized dryRun
+        directive will result in an error response and no further
+        processing of the request.
+        Valid values are: - All: all dry run stages will be processed
+
+    Returns:
+        The created kubernetes API objects.
+
+    Raises:
+        FailToCreateError which holds list of `client.rest.ApiException`
+        instances for each object that failed to create.
+    """
+    return process_from_yaml(
+        k8s_client,
+        yaml_file,
+        yaml_objects,
+        verbose,
+        namespace,
+        apply,
+        action="create",
+        **kwargs)
+
+
+def create_from_dict(k8s_client, data, verbose=False, namespace='default',
+                     **kwargs):
+    """
+    Perform an action from a dictionary containing valid kubernetes
+    API object (i.e. List, Service, etc).
+
+    Input:
+    k8s_client: an ApiClient object, initialized with the client args.
+    data: a dictionary holding valid kubernetes objects
+    verbose: If True, print confirmation from the create action.
+        Default is False.
+    namespace: string. Contains the namespace to create all
+        resources inside. The namespace must preexist otherwise
+        the resource creation will fail. If the API object in
+        the yaml file already contains a namespace definition
+        this parameter has no effect.
+
+    Returns:
+        The created kubernetes API objects.
+
+    Raises:
+        FailToCreateError which holds list of `client.rest.ApiException`
+        instances for each object that failed to create.
+    """
+    return process_from_dict(k8s_client, data, verbose, namespace, action="create", **kwargs)
+
+class FailToCreateError(FailToProcessError):
+    """
+    An exception class for handling error if an error occurred when
+    handling a yaml file.
+    """
