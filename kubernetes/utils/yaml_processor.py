@@ -280,9 +280,10 @@ def process_from_yaml_single_item(
                 body=yml_object, field_manager="python-client", **kwargs
             )
         elif action == "delete":
+            name = yml_object["metadata"]["name"]
             resp = apply_client.delete(
-                body=yml_object, field_manager="python-client", **kwargs
-            )
+                    name=name, **kwargs
+                )
         if verbose:
             msg = "{0} {1}d.".format(kind, action)
             if hasattr(resp, "status"):
